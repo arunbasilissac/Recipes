@@ -1,5 +1,5 @@
 <div>
-  <img align="left" width="44" height="44" src="https://github.com/erencelik/movie-lib-ios/blob/main/favicon.ico" alt="Movie Lib iOS Application App Icon">
+  <img align="left" width="44" height="44" src="https://florian.sg/menu/" alt="Movie Lib iOS Application App Icon">
   <h1>Recipes</h1>
 </div>
 
