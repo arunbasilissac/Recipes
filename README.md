@@ -19,5 +19,5 @@
 
 
 ## Available ingredients API
-[TMDB](https://run.mocky.io/v3/45a5a07f-e981-4918-9c31-090b121d6c5f) API is used for searching through movies.
+[mocky](https://run.mocky.io/v3/45a5a07f-e981-4918-9c31-090b121d6c5f) API is used for searching through movies.
 
