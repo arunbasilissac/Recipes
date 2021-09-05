@@ -17,23 +17,32 @@ class RERecipesViewModel: NSObject {
     var dismissLoadingHandler: (() -> Void)?
     var showErrorAlertHandler: ((_ error: REError) -> Void)?
     var tableReloadSection: ((_ section: Int) -> Void)?
+    var showAlertHandler: ((_ title: String, _ message: String, _ buttonTitle: String) -> Void)?
     
     private var allRecipes = [RERecipes]()
     private var recipes = [RERecipes]() {
         didSet {
-            self.tableReloadHandler?()
-        }
-    }
-    private var availableIngredients = Set<String>() {
-        didSet {
-            filterRecipes()
+            self.loadData()
         }
     }
 }
 
 // MARK: Fetch Data
-extension RERecipesViewModel {
+private extension RERecipesViewModel {
+     func loadData() {
+        self.tableReloadHandler?()
+        if recipes.isEmpty {
+            self.showAlertHandler?(Alert.errorTitle, Alert.noRecipes, Alert.okButtonLabel)
+        }
+    }
     
+    func reloadSection(_ section: Int) {
+        self.tableReloadSection?(section)
+    }
+}
+
+// MARK: Fetch Data
+extension RERecipesViewModel {
     func fetchIngredients(completion: OptionalCompletionClosure = nil) {
         self.showLoadingHandler?()
         networkService.fetchIngredients { [weak self] result in
@@ -43,7 +52,7 @@ extension RERecipesViewModel {
             self.dismissLoadingHandler?()
             switch result {
             case .success(let ingredients):
-                self.availableIngredients = ingredients
+                self.recipes = self.filter(recipesList: self.allRecipes, with: ingredients)
             case .failure(let error):
                 self.showErrorAlertHandler?(error)
             }
@@ -60,7 +69,7 @@ extension RERecipesViewModel {
             switch result {
             case .success(let recipes):
                 self.allRecipes = recipes
-                self.recipes = self.allRecipes
+                self.recipes = recipes
             case .failure(let error):
                 self.showErrorAlertHandler?(error)
             }
@@ -69,17 +78,16 @@ extension RERecipesViewModel {
 }
 
 // MARK: Filter
-private extension RERecipesViewModel {
-    func filterRecipes() {
-        recipes = allRecipes.filter({ recipe in
-            Set(recipe.ingredients).isSubset(of: availableIngredients)
+extension RERecipesViewModel {
+    func filter(recipesList: [RERecipes], with ingredients: Set<String>) -> [RERecipes] {
+        return recipesList.filter({ recipe in
+            Set(recipe.ingredients).isSubset(of: ingredients)
         })
     }
 }
 
 // MARK: TableView Delegate and DataSource
-extension RERecipesViewModel: UITableViewDataSource, UITableViewDelegate, RERecipeTableViewHeaderDelegate {
-    
+extension RERecipesViewModel: UITableViewDataSource, UITableViewDelegate {
     func numberOfSections(in tableView: UITableView) -> Int {
         return recipes.count
     }
@@ -100,7 +108,7 @@ extension RERecipesViewModel: UITableViewDataSource, UITableViewDelegate, REReci
         let headerCell = tableView.dequeueReusableHeaderFooterView(withIdentifier: ReuseIdentifier.recipeHeaderView) as! RECustomHeaderView
         headerCell.recipe = recipes[section]
         headerCell.section = section
-        headerCell.delegate = self
+        headerCell.tableReloadSection = tableReloadSection
         return headerCell
     }
     
@@ -108,9 +116,5 @@ extension RERecipesViewModel: UITableViewDataSource, UITableViewDelegate, REReci
         let cell = tableView.dequeueReusableCell(withIdentifier: ReuseIdentifier.ingredientsTableViewCell) as! REIngredientsTableViewCell
         cell.ingredient = recipes[indexPath.section].ingredients[indexPath.row]
         return cell
-    }
-    
-    func reloadSection(_ section: Int) {
-        self.tableReloadSection?(section)
     }
 }

@@ -14,6 +14,7 @@ struct Constants {
 struct Alert {
     static let okButtonLabel: String = "Ok"
     static let errorTitle: String = "Oops 🙁"
+    static let noRecipes: String = "Sorry, no recipes available for the ingredients you have. Please gather some more ingredients"
 }
 
 struct ReuseIdentifier {

@@ -7,13 +7,12 @@
 
 import UIKit
 
-protocol RERecipeTableViewHeaderDelegate: AnyObject {
-    func reloadSection(_ section: Int)
-}
+
 
 class RECustomHeaderView: UITableViewHeaderFooterView {
     private let labelTitle = UILabel()
     private let buttonStatus = UIButton()
+    var tableReloadSection: ((_ section: Int) -> Void)?
     
     var recipe: RERecipes? {
         didSet {
@@ -21,7 +20,6 @@ class RECustomHeaderView: UITableViewHeaderFooterView {
         }
     }
     var section: Int?
-    weak var delegate: RERecipeTableViewHeaderDelegate?
 
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
@@ -76,6 +74,6 @@ class RECustomHeaderView: UITableViewHeaderFooterView {
         guard let section = self.section else {
             return
         }
-        delegate?.reloadSection(section)
+        self.tableReloadSection?(section)
     }
 }

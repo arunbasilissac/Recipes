@@ -75,5 +75,12 @@ private extension RERecipesViewController {
             }
             self.tableViewRecipes.reloadSections([section], with: .automatic)
         }
+        
+        viewModel?.showAlertHandler = { [weak self] title, message, buttonTitle in
+            guard let self = self else {
+                return
+            }
+            self.presentREAlert(title: title, message: message, buttonTitle: Alert.okButtonLabel)
+        }
     }
 }

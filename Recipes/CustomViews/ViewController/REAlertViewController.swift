@@ -12,7 +12,7 @@ class REAlertViewController: UIViewController {
     let containerView: REAlertContainerView = REAlertContainerView()
     let titleLabel: RETitleLabel = RETitleLabel(textAlignment: .center, fontSize: 20)
     let messageLabel: REBodyLabel = REBodyLabel(textAlignment: .center)
-    let actionButton: REButton = REButton(backgroundColor: .systemPink, title: "Ok")
+    let actionButton: REButton = REButton(backgroundColor: .systemYellow, title: "Ok")
 
     var alertTitle: String?
     var message: String?
